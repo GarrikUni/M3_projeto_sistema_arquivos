@@ -95,18 +95,14 @@ void btree_insert(BTree* tree, TreeNode* k) {
     }
 }
 
-// MODIFIED btree_search
 TreeNode* btree_search(BTree* tree, const char* name, NodeType type) {
     BTreeNode* current = tree->root;
     while (current) {
         int i = 0;
-        // Find the first key that is >= name
         while (i < current->n && strcmp(name, current->keys[i]->name) > 0) {
             i++;
         }
 
-        // Iterate through all keys in the current node that match 'name'
-        // This is crucial for handling items with same name but different types
         int search_idx = i;
         while (search_idx < current->n && strcmp(name, current->keys[search_idx]->name) == 0) {
             if (current->keys[search_idx]->type == type) {
@@ -115,11 +111,9 @@ TreeNode* btree_search(BTree* tree, const char* name, NodeType type) {
             search_idx++;
         }
 
-        // If not found in current node, descend to child
         if (current->leaf) {
-            return NULL; // Not found and reached a leaf node
+            return NULL;
         } else {
-            // Descend into the child corresponding to the initial 'i'
             current = current->children[i];
         }
     }
@@ -144,7 +138,6 @@ static void btree_delete_recursive(BTreeNode* x, const char* name, NodeType type
         i++;
     }
 
-    // Iterate through all potential keys with the exact name to find the right type
     int delete_idx = i;
     while (delete_idx < x->n && strcmp(name, x->keys[delete_idx]->name) == 0) {
         if (x->keys[delete_idx]->type == type) {
@@ -158,7 +151,6 @@ static void btree_delete_recursive(BTreeNode* x, const char* name, NodeType type
     if (x->leaf) {
         return;
     } else {
-        // If not found in current node, recurse into appropriate child
         btree_delete_recursive(x->children[i], name, type);
     }
 }
